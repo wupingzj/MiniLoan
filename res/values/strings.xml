@@ -2,7 +2,10 @@
 <resources>
 
     <string name="app_name">MiniLoan</string>
-    <string name="Quote">My Quote Button</string>
-    <string name="my_content">My DUMMY\nCONTENT8</string>
-
+    <string name="quote">My Quote Button</string>
+    <string name="my_content">My DUMMY\nCONTENT13</string>
+    <string name="account">Account</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    
 </resources>

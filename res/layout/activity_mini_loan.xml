@@ -22,6 +22,27 @@
         android:textSize="50sp"
         android:textStyle="bold" />
 
+    <EditText
+        android:id="@+id/Account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:ems="10"
+        android:hint="@string/account"
+        android:inputType="textEmailAddress" >
+    </EditText>
+
+    <EditText
+        android:id="@+id/Password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/password"
+        android:inputType="textPassword" >
+
+        <requestFocus />
+    </EditText>
+
     <!--
          This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows.
@@ -48,7 +69,18 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/Quote" />
+                android:text="@string/quote"
+                android:onClick="onQuote" />
+            
+            <Button
+                android:id="@+id/Login"
+                style="?buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/login"
+                android:onClick="onLogin" />
+            
         </LinearLayout>
     </FrameLayout>
 

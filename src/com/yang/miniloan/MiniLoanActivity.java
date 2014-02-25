@@ -1,14 +1,21 @@
 package com.yang.miniloan;
 
-import com.yang.miniloan.util.SystemUiHider;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
+
+import com.yang.miniloan.errorhandling.MiniLoanUncaughtExceptionHanlder;
+import com.yang.miniloan.login.DummyLoginServiceImpl;
+import com.yang.miniloan.login.LoginService;
+import com.yang.miniloan.login.SimpleCredential;
+import com.yang.miniloan.util.SystemUiHider;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -17,6 +24,8 @@ import android.view.View;
  * @see SystemUiHider
  */
 public class MiniLoanActivity extends Activity {
+	public static final String TAG = "MiniLoanActivity";
+
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -44,10 +53,18 @@ public class MiniLoanActivity extends Activity {
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
 	private SystemUiHider mSystemUiHider;
+	
+	private Thread.UncaughtExceptionHandler androidDefaultEH = Thread.getDefaultUncaughtExceptionHandler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// MY ERROR HANDLING
+		//Thread.UncaughtExceptionHandler androidDefaultEH = Thread.getDefaultUncaughtExceptionHandler();
+		Thread.UncaughtExceptionHandler handler = new MiniLoanUncaughtExceptionHanlder(androidDefaultEH);
+		Thread.setDefaultUncaughtExceptionHandler(handler);
+		// END: MY ERROR HANDLING
 
 		setContentView(R.layout.activity_mini_loan);
 
@@ -56,48 +73,41 @@ public class MiniLoanActivity extends Activity {
 
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
-		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
-				HIDER_FLAGS);
+		mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
 		mSystemUiHider.setup();
-		mSystemUiHider
-				.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
-					// Cached values.
-					int mControlsHeight;
-					int mShortAnimTime;
+		mSystemUiHider.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
+			// Cached values.
+			int mControlsHeight;
+			int mShortAnimTime;
 
-					@Override
-					@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-					public void onVisibilityChange(boolean visible) {
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-							// If the ViewPropertyAnimator API is available
-							// (Honeycomb MR2 and later), use it to animate the
-							// in-layout UI controls at the bottom of the
-							// screen.
-							if (mControlsHeight == 0) {
-								mControlsHeight = controlsView.getHeight();
-							}
-							if (mShortAnimTime == 0) {
-								mShortAnimTime = getResources().getInteger(
-										android.R.integer.config_shortAnimTime);
-							}
-							controlsView
-									.animate()
-									.translationY(visible ? 0 : mControlsHeight)
-									.setDuration(mShortAnimTime);
-						} else {
-							// If the ViewPropertyAnimator APIs aren't
-							// available, simply show or hide the in-layout UI
-							// controls.
-							controlsView.setVisibility(visible ? View.VISIBLE
-									: View.GONE);
-						}
-
-						if (visible && AUTO_HIDE) {
-							// Schedule a hide().
-							delayedHide(AUTO_HIDE_DELAY_MILLIS);
-						}
+			@Override
+			@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+			public void onVisibilityChange(boolean visible) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+					// If the ViewPropertyAnimator API is available
+					// (Honeycomb MR2 and later), use it to animate the
+					// in-layout UI controls at the bottom of the
+					// screen.
+					if (mControlsHeight == 0) {
+						mControlsHeight = controlsView.getHeight();
 					}
-				});
+					if (mShortAnimTime == 0) {
+						mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+					}
+					controlsView.animate().translationY(visible ? 0 : mControlsHeight).setDuration(mShortAnimTime);
+				} else {
+					// If the ViewPropertyAnimator APIs aren't
+					// available, simply show or hide the in-layout UI
+					// controls.
+					controlsView.setVisibility(visible ? View.VISIBLE : View.GONE);
+				}
+
+				if (visible && AUTO_HIDE) {
+					// Schedule a hide().
+					delayedHide(AUTO_HIDE_DELAY_MILLIS);
+				}
+			}
+		});
 
 		// Set up the user interaction to manually show or hide the system UI.
 		contentView.setOnClickListener(new View.OnClickListener() {
@@ -114,8 +124,7 @@ public class MiniLoanActivity extends Activity {
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
-		findViewById(R.id.Quote).setOnTouchListener(
-				mDelayHideTouchListener);
+		findViewById(R.id.Quote).setOnTouchListener(mDelayHideTouchListener);
 	}
 
 	@Override
@@ -158,5 +167,47 @@ public class MiniLoanActivity extends Activity {
 	private void delayedHide(int delayMillis) {
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
+	}
+
+	public static String ADMIN = "admin";
+	public static String Kevin = "kevin";
+
+	public void onLogin(View view) {
+		// Intent intent = new Intent(this, WellcomeActivity.class);
+		EditText accountET = (EditText) findViewById(R.id.Account);
+		String account = accountET.getText().toString();
+		EditText pwdET = (EditText) findViewById(R.id.Password);
+		String pwd = pwdET.getText().toString();
+
+		// TODO to be wired using Spring Android
+		LoginService loginService = new DummyLoginServiceImpl();
+		if (loginService.login(new SimpleCredential(account, pwd))) {
+			// TODO log
+			Log.i(TAG, "Login succeeded.");
+			messageBox("login", "Login succeeded.");
+
+		} else {
+			// TODO reject
+			Log.i(TAG, "Login failed.");
+			messageBox("login", "Login failed.");
+
+			// force an exception.
+			throw new RuntimeException("TO BE IMPLEMENTED222");
+
+		}
+	}
+
+	// *********************************************************
+	// generic dialog, takes in the method name and error message
+	// *********************************************************
+	private void messageBox(String method, String message) {
+		Log.d("EXCEPTION: " + method, message);
+
+		AlertDialog.Builder messageBox = new AlertDialog.Builder(this);
+		messageBox.setTitle(method);
+		messageBox.setMessage(message);
+		messageBox.setCancelable(false);
+		messageBox.setNeutralButton("OK", null);
+		messageBox.show();
 	}
 }
