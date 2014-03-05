@@ -3,6 +3,7 @@ package com.yang.miniloan;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +26,7 @@ import com.yang.miniloan.util.SystemUiHider;
  */
 public class MiniLoanActivity extends Activity {
 	public static final String TAG = "MiniLoanActivity";
+	public final static String EXTRA_MESSAGE = "com.yang.miniloan.MiniLoanActivity.MESSAGE";
 
 	/**
 	 * Whether or not the system UI should be auto-hidden after
@@ -209,5 +211,13 @@ public class MiniLoanActivity extends Activity {
 		messageBox.setCancelable(false);
 		messageBox.setNeutralButton("OK", null);
 		messageBox.show();
+	}
+	
+	public void onSendMessage(View view) {
+		Intent intent = new Intent(this, DisplayMessageActivity.class);
+		EditText editText = (EditText) findViewById(R.id.Password);
+		String message = editText.getText().toString();
+		intent.putExtra(EXTRA_MESSAGE, message);
+		startActivity(intent);
 	}
 }

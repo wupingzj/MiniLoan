@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MiniLoan</string>
+    <string name="app_name">MiniLoan_AppName</string>
     <string name="quote">My Quote Button</string>
-    <string name="my_content">My DUMMY\nCONTENT13</string>
+    <string name="my_content">My DUMMY\nCONTENT16</string>
     <string name="account">Account</string>
     <string name="password">Password</string>
+    <string name="password2">Password2</string>
     <string name="login">Login</string>
+    <string name="title_activity_display_message">My Message1</string>
+    <string name="action_settings">Settings</string>
     
+
 </resources>

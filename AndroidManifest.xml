@@ -5,8 +5,8 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="18" />
+        android:minSdkVersion="7"
+        android:targetSdkVersion="19" />
 
     <application
         android:allowBackup="true"
@@ -24,6 +24,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.yang.miniloan.DisplayMessageActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:label="@string/title_activity_display_message"
+            android:parentActivityName="com.yang.miniloan.MiniLoanActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.yang.miniloan.MiniLoanActivity" />
+        </activity>
     </application>
+
+    <!-- android:configChanges="orientation|keyboardHidden|screenSize" -->
 
 </manifest>
