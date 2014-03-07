@@ -1,7 +1,6 @@
 package com.yang.miniloan;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,8 +8,9 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.support.v7.app.ActionBarActivity;
 
-public class DisplayMessageActivity extends Activity {
+public class DisplayMessageActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
