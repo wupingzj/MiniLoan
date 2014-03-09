@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -189,8 +190,6 @@ public class LoginActivity extends Activity {
 	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			// TODO: attempt authentication against a network service.
-
 			try {
 				// Simulate network access.
 				Thread.sleep(2000);
@@ -198,6 +197,11 @@ public class LoginActivity extends Activity {
 				return false;
 			}
 
+			// TODO: attempt authentication against a network service.
+			if ("fail".equalsIgnoreCase(mPassword)) {
+				return false;
+			}
+						
 			for (String credential : DUMMY_CREDENTIALS) {
 				String[] pieces = credential.split(":");
 				if (pieces[0].equals(mEmail)) {
@@ -213,11 +217,16 @@ public class LoginActivity extends Activity {
 		@Override
 		protected void onPostExecute(final Boolean success) {
 			mAuthTask = null;
-			showProgress(false);
-
+			
 			if (success) {
-				finish();
+				//As after complete UserLoginTask, we will progress to next activity, we don't need to worry about progress view.
+				//showProgress(false);
+				
+				startUpNewActivity(MiniLoanActivity.class);
+				//finish();
 			} else {
+				showProgress(false);
+				
 				mPasswordView.setError(getString(R.string.error_incorrect_password));
 				mPasswordView.requestFocus();
 			}
@@ -228,5 +237,13 @@ public class LoginActivity extends Activity {
 			mAuthTask = null;
 			showProgress(false);
 		}
+	}
+	
+	protected void startUpNewActivity(Class clazz) {
+		Intent intent;
+
+	    intent = new Intent(this, clazz);
+	    startActivity( intent );
+	    finish();
 	}
 }
