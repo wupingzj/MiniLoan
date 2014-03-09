@@ -58,6 +58,14 @@ public class MiniLoanActivity extends Activity {
 	
 	private Thread.UncaughtExceptionHandler androidDefaultEH = Thread.getDefaultUncaughtExceptionHandler();
 
+	protected void startUpNewActivity(Class clazz) {
+		Intent intent;
+
+	    intent = new Intent(this, clazz);
+	    startActivity( intent );
+	    finish();
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,6 +75,11 @@ public class MiniLoanActivity extends Activity {
 		Thread.UncaughtExceptionHandler handler = new MiniLoanUncaughtExceptionHanlder(androidDefaultEH);
 		Thread.setDefaultUncaughtExceptionHandler(handler);
 		// END: MY ERROR HANDLING
+		
+		
+		// delegate to LoginActivity
+		startUpNewActivity(LoginActivity.class);
+		// finish
 
 		setContentView(R.layout.activity_mini_loan);
 
