@@ -1,13 +1,16 @@
 package com.yang.miniloan;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -24,7 +27,7 @@ import com.yang.miniloan.util.SystemUiHider;
  * 
  * @see SystemUiHider
  */
-public class MiniLoanActivity extends Activity {
+public class MiniLoanActivity extends ActionBarActivity {
 	public static final String TAG = "MiniLoanActivity";
 	public final static String EXTRA_MESSAGE = "com.yang.miniloan.MiniLoanActivity.MESSAGE";
 
@@ -75,6 +78,14 @@ public class MiniLoanActivity extends Activity {
 
 		setContentView(R.layout.activity_mini_loan);
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			setupHoneycombOrAbove();
+		} else {
+			setupSupportV7();
+		}
+		
+		
+		
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
 
@@ -90,6 +101,8 @@ public class MiniLoanActivity extends Activity {
 			@Override
 			@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 			public void onVisibilityChange(boolean visible) {
+				//if (true) return;
+				
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
 					// If the ViewPropertyAnimator API is available
 					// (Honeycomb MR2 and later), use it to animate the
@@ -208,7 +221,7 @@ public class MiniLoanActivity extends Activity {
 	// generic dialog, takes in the method name and error message
 	// *********************************************************
 	private void messageBox(String method, String message) {
-		Log.d("EXCEPTION: " + method, message);
+		Log.d("Message: " + method, message);
 
 		AlertDialog.Builder messageBox = new AlertDialog.Builder(this);
 		messageBox.setTitle(method);
@@ -224,5 +237,48 @@ public class MiniLoanActivity extends Activity {
 		String message = editText.getText().toString();
 		intent.putExtra(EXTRA_MESSAGE, message);
 		startActivity(intent);
+	}
+	
+	// *********************** action bar ***********************
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    // Inflate the menu items for use in the action bar
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.miniloan_activity_actions, menu);
+	    return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle presses on the action bar items
+	    switch (item.getItemId()) {
+	        case R.id.action_search:
+	            openSearch();
+	            return true;
+	        case R.id.action_settings:
+	            openSettings();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+	
+	
+	// display Up action button
+	private void setupSupportV7() {
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	}
+	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void setupHoneycombOrAbove() {
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+	}
+
+	private void openSettings() {
+		messageBox("Search", "Show settings ...");
+	}
+
+	private void openSearch() {
+		messageBox("Search", "Search in action...");
 	}
 }
