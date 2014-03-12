@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MiniLoan_AppName</string>
+    <string name="app_name">MiniLoan</string>
     <string name="quote">My Quote Button</string>
     <string name="my_content">My DUMMY\nCONTENT18</string>
     <string name="account">Account</string>
